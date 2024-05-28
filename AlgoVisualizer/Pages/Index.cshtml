@@ -1,0 +1,24 @@
+﻿@page
+
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="container d-flex flex-column align-items-start">
+    <div class="row" role="group">
+        <div class="btn-group col-auto">
+            <button id="sort" class="btn btn-primary mx-1">Sort</button>
+            <button id="shuffle" class="btn btn-primary mx-1">Shuffle</button>
+        </div>
+        <div class="px-1 col-auto">
+            <label for="delayRange">Delay (ms): <span id="delayValue">250</span></label>
+            <input type="range" class="form-range" id="delayRange" min="100" max="1000" step="50" value="250">
+        </div>
+    </div>
+    
+    <div class="pt-3">
+        <canvas id="visualizationCanvas" width="1000" height="520"></canvas>
+    </div>
+</div>
+
+<script src="~/js/BubbleSort.js"></script>
