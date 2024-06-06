@@ -4,9 +4,12 @@ const canvas = document.getElementById('visualizationCanvas');
 const ctx = canvas.getContext('2d');
 const barWidth = 20;
 const barMargin = 5;
-//const delay = 250;
 const offset = 20;
 let inProgress = false;
+let stopRequested = false;
+let history = [];
+let currentStep = -1;
+let sorted = false;
 
 // Get the delay range input and delay value span
 const delayRange = document.getElementById('delayRange');
@@ -21,33 +24,96 @@ let array = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,
 visualize(array);
 
 const sortButton = document.getElementById('sort');
-sortButton.onclick = function () { if (!inProgress) bubbleSort(array); };
+sortButton.onclick = function () { if (!inProgress) sort(); };
 
 const shuffleButton = document.getElementById('shuffle');
 shuffleButton.onclick = function () { if (!inProgress) shuffle(array); };
 
-// Sort array
-async function bubbleSort(arr) {
+const stopButton = document.getElementById('stop');
+stopButton.onclick = function () { stopRequested = true; };
+
+const backButton = document.getElementById('back');
+backButton.onclick = function () { if (!inProgress) stepBack(); }
+
+const forwardButton = document.getElementById('forward');
+forwardButton.onclick = function () { if (!inProgress) stepForward(); }
+
+async function sort() {
     inProgress = true;
+    stopRequested = false;
+    
+    if (!sorted){
+        let arrayCopy = [...array];
+        bubbleSort(arrayCopy);
+        sorted = true;
+    }
+    
+    while (currentStep >= -1 && currentStep < history.length - 1) {
+        if (stopRequested) {
+            inProgress = false;
+            return;
+        }
+        else {
+            currentStep++;
+            let hs = history[currentStep];
+            [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
+            visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
+            await sleep(delayRange.value);
+        }
+    }
+    
+    inProgress = false;
+}
+
+// Sort array
+function bubbleSort(arr) {
+    //inProgress = true;
+    //stopRequested = false;
     let len = arr.length;
     for (let i = 0; i < len - 1; i++) {
         for (let j = 0; j < len - 1 - i; j++) {
+            /*if (stopRequested){
+                inProgress = false;
+                return;
+            }*/
             if (arr[j] > arr[j + 1]) {
                 // Swap the elements
                 let temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
-                visualize(arr, j, j + 1); // Pass the indices of swapped elements
-                await sleep(delayRange.value);
+                history.push([j, j+1])
+                //visualize(arr, j, j + 1); // Pass the indices of swapped elements
+                //await sleep(delayRange.value);
             }
         }
     }
-    inProgress = false;
+    //inProgress = false;
+}
+
+function stepForward() {
+    if (currentStep < history.length - 1) {
+        currentStep++;
+        let hs = history[currentStep];
+        [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
+        visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
+    } 
+}
+
+function stepBack() {
+    if (currentStep >= 0) {
+        let hs = history[currentStep];
+        [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
+        currentStep--;
+        visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
+    }
 }
 
 // Shuffle array
 async function shuffle(arr) {
+    currentStep = -1;
     inProgress = true;
+    sorted = false;
+    history = [];
     let currentIndex = arr.length;
 
     // While there remain elements to shuffle...
@@ -59,8 +125,8 @@ async function shuffle(arr) {
 
         // And swap it with the current element.
         [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
-        visualize(arr);
     }
+    visualize(arr);
     inProgress = false;
 }
 
@@ -94,7 +160,6 @@ function visualize(arr, index1 = null, index2 = null) {
     if (index1 !== null && index2 !== null) {
         drawArrow(index1, index2);
     }
-    //drawArrow(0, 18);
 }
 
 // Function to draw arrow between two bars
@@ -102,22 +167,6 @@ function drawArrow(index1, index2) {
     const x1 = (barWidth + barMargin) * index1 + barWidth / 2;
     const x2 = (barWidth + barMargin) * index2 + barWidth / 2;
     const y = canvas.height - offset;
-
-    /*ctx.beginPath();
-    ctx.moveTo(x1, y);
-    //ctx.quadraticCurveTo((x1 + x2) / 2, y - 50, x2, y);
-    ctx.bezierCurveTo(x1, y - 25, x2, y - 25, x2, y);
-    ctx.moveTo(x1, y);
-    ctx.lineTo(x1 - 7, y - 5);
-    ctx.moveTo(x1, y);
-    ctx.lineTo(x1 + 7, y - 5);
-
-    ctx.moveTo(x2, y);
-    ctx.lineTo(x2 - 7, y - 5);
-    ctx.moveTo(x2, y);
-    ctx.lineTo(x2 + 7, y - 5);
-
-    ctx.stroke();*/
 
     ctx.beginPath();
     ctx.moveTo(x1, y);
