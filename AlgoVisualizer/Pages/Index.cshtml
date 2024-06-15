@@ -1,29 +1,28 @@
 ﻿@page
 
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Welcome page";
 }
 
-<div class="container d-flex flex-column align-items-start">
-    <div class="row" role="group">
-        <div class="btn-group col-auto">
-            <button id="sort" class="btn btn-primary mx-1">Sort</button>
-            <button id="stop" class="btn btn-primary mx-1">Stop</button>
-            
-            <button id="back" class="btn btn-primary mx-1"><</button>
-            <button id="forward" class="btn btn-primary mx-1">></button>
-            
-            <button id="shuffle" class="btn btn-primary mx-1">Shuffle</button>
-        </div>
-        <div class="px-1 col-auto">
-            <label for="delayRange">Delay (ms): <span id="delayValue">250</span></label>
-            <input type="range" class="form-range" id="delayRange" min="100" max="1000" step="50" value="250">
-        </div>
+<header class="bg-primary text-white text-center py-3">
+    <div class="container">
+        <h1 class="display-4">Ласкаво просимо до Візуалізатора Алгоритмів</h1>
+        <p class="lead">Досліджуйте, вчіться та покращуйте свої знання з програмування!</p>
     </div>
-    
-    <div class="pt-3">
-        <canvas id="visualizationCanvas" width="573" height="520"></canvas>
-    </div>
-</div>
+</header>
 
-<script src="~/js/BubbleSort.js"></script>
+<section class="container my-3">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Що це за веб-застосунок?</h2>
+            <p>Суть цього веб-застосуноку полягає в динамічній візуалізації виконання різних алгоритмів. Цей додаток надасть змогу вивчити різноманітні алгоритми, ознайомитися з їх реалізацією на різних мовах програмуваннях, спробувати їх у дії та порівняти їх ефективність.</p>
+            <h2>Потенційні сфери застосування:</h2>
+            <ul>
+                <li>Освіта (використання в навчальних закладах).</li>
+                <li>Професійний розвиток (для спеціалістів, які хочуть освіжити свої знання та навички).</li>
+                <li>Дослідження (використання в наукових цілях задля дослідження ефективності та властивостей різних алгоритмів сортування та пошуку).</li>
+                <li>Проектування та оптимізація програмного забезпечення (розробники програмного забезпечення можуть скористатися цим веб-застосунком для аналізу та вибору оптимальних алгоритмів для своїх проєктів).</li>
+            </ul>
+        </div>
+    </div>
+</section>
