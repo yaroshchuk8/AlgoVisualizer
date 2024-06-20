@@ -1,0 +1,60 @@
+﻿@page
+
+@{
+    ViewData["Title"] = "DFS";
+}
+
+<div class="container d-flex flex-column align-items-start">
+    <div class="row pb-3" role="group">
+        <div class="btn-group col-auto">
+            <button id="start" class="btn btn-primary btn-lg mx-1">Start</button>
+            <button id="clear" class="btn btn-secondary btn-lg">Clear</button>
+        </div>
+        <div class="px-5 mx-3 col-auto">
+            <button id="theoryButton" class="btn btn-outline-dark btn-lg">Theory</button>
+        </div>
+    </div>  
+    <div class="row pt-3" role="group">
+        <div id="grid" class="grid col-auto"></div>
+        <div class="col-auto">
+            <div class="btn-group mb-2" role="group">
+                <button id="showCSharp" class="btn btn-info">C#</button>
+                <button id="showJS" class="btn btn-info mx-1">JS</button>
+                <button id="showPython" class="btn btn-info">Python</button>
+            </div>
+            <pre id="codeBox" class="line-numbers fixed-height"></pre>
+        </div>
+    </div>
+</div>
+
+<div id="theoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Depth-first search</h2>
+        DFS, or Depth-First Search, is a way to explore a graph or tree data structure. Here's how it works:<br/>
+        1. Start at a node: You pick a starting node in the graph or tree.<br/>
+        2. Explore as far as possible: From that starting node, you go as deep as you can, following each path until you reach a dead end.<br/>
+        3. Backtrack: Once you can't go any further, you backtrack to the most recent node with an unexplored path, and you continue exploring from there.<br/>
+        4. Repeat: You repeat this process until you've visited every node in the graph or tree.<br/>
+        DFS is like exploring a maze: you go down one path until you can't go any further, then you backtrack and try another path, continuing until you find the exit.<br/>
+        <img src="~/images/pathfinding/dfs.jpg" alt="DFS Visualization" style="width:100%;height:auto;">
+    </div>
+</div>
+
+<script>
+document.getElementById('theoryButton').onclick = function() {
+    document.getElementById('theoryModal').style.display = "block";
+}
+
+document.querySelector('.modal .close').onclick = function() {
+    document.getElementById('theoryModal').style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('theoryModal')) {
+        document.getElementById('theoryModal').style.display = "none";
+    }
+}
+</script>
+
+<script src="~/js/pathfinding/dfs.js"></script>

@@ -42,22 +42,24 @@ const codeBox = document.getElementById('codeBox');
 
 const showCSharpButton = document.getElementById('showCSharp');
 showCSharpButton.onclick = function() {
-    codeBox.innerHTML = 
-    `<code class="language-csharp">public void BubbleSort(int[] arr)
+    codeBox.innerHTML =
+        `<code class="language-csharp">public void SelectionSort(int[] arr)
 {
     int n = arr.Length;
     for (int i = 0; i < n - 1; i++)
     {
-        for (int j = 0; j < n - i - 1; j++)
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++)
         {
-            if (arr[j] > arr[j + 1])
+            if (arr[j] < arr[minIndex])
             {
-                // Swap neighboring elements
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                minIndex = j;
             }
         }
+        // Swap the found minimum element with the first element
+        int temp = arr[minIndex];
+        arr[minIndex] = arr[i];
+        arr[i] = temp;
     }
 }</code>`;
     Prism.highlightAll();
@@ -66,19 +68,20 @@ showCSharpButton.onclick = function() {
 const showJSButton = document.getElementById('showJS');
 showJSButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-javascript">function bubbleSort(arr) {
+        `<code class="language-javascript">function selectionSort(arr) {
     let n = arr.length;
-    for (let i = 0; i < n-1; i++) {
-        for (let j = 0; j < n-i-1; j++) {
-            if (arr[j] > arr[j+1]) {
-                // Swap neighboring elements
-                let temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
+    for (let i = 0; i < n - 1; i++) {
+        let minIndex = i;
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
             }
         }
+        // Swap the found minimum element with the first element
+        let temp = arr[minIndex];
+        arr[minIndex] = arr[i];
+        arr[i] = temp;
     }
-    return arr;
 }</code>`;
     Prism.highlightAll();
 }
@@ -86,13 +89,18 @@ showJSButton.onclick = function() {
 const showPythonButton = document.getElementById('showPython');
 showPythonButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-python">def bubble_sort(arr):
+        `<code class="language-python">def selection_sort(arr):
     n = len(arr)
-    for i in range(n-1):
-        for j in range(n-i-1):
-            if arr[j] > arr[j+1]:
-                # Swap neighboring elements
-                arr[j], arr[j+1] = arr[j+1], arr[j]
+
+    for i in range(n):
+        min_index = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        # Swap the found minimum element with the first element
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+    
     return arr</code>`;
     Prism.highlightAll();
 }
@@ -108,13 +116,13 @@ function setup() {
 async function sort() {
     inProgress = true;
     stopRequested = false;
-    
+
     if (!isSorted){
         let arrayCopy = [...array];
-        bubbleSort(arrayCopy);
+        selectionSort(arrayCopy);
         isSorted = true;
     }
-    
+
     while (currentStep >= -1 && currentStep < history.length - 1) {
         if (stopRequested) {
             inProgress = false;
@@ -128,21 +136,22 @@ async function sort() {
             await sleep(delayRange.value);
         }
     }
-    
+
     inProgress = false;
 }
 // Function to provide history of state change
-function bubbleSort(arr) {
+function selectionSort(arr) {
     let len = arr.length;
     for (let i = 0; i < len - 1; i++) {
-        for (let j = 0; j < len - 1 - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-                // Swap the elements
-                let temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                history.push([j, j+1])
+        let minIndex = i;
+        for (let j = i + 1; j < len; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
             }
+        }
+        if (minIndex !== i) {
+            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]]; // Swap elements
+            history.push([i, minIndex]);
         }
     }
 }
@@ -153,7 +162,7 @@ function stepForward() {
         let hs = history[currentStep];
         [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
         visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
-    } 
+    }
 }
 // Make one step back
 function stepBack() {

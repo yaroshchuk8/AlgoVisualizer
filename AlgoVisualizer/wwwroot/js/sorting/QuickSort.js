@@ -42,23 +42,32 @@ const codeBox = document.getElementById('codeBox');
 
 const showCSharpButton = document.getElementById('showCSharp');
 showCSharpButton.onclick = function() {
-    codeBox.innerHTML = 
-    `<code class="language-csharp">public void BubbleSort(int[] arr)
+    codeBox.innerHTML =
+        `<code class="language-csharp">public void QuickSort(int[] arr, int low, int high)
 {
-    int n = arr.Length;
-    for (int i = 0; i < n - 1; i++)
+    if (low < high)
     {
-        for (int j = 0; j < n - i - 1; j++)
+        int pivotIndex = Partition(arr, low, high);
+
+        QuickSort(arr, low, pivotIndex - 1);
+        QuickSort(arr, pivotIndex + 1, high);
+    }
+}
+public int Partition(int[] arr, int low, int high)
+{
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++)
+    {
+        if (arr[j] < pivot)
         {
-            if (arr[j] > arr[j + 1])
-            {
-                // Swap neighboring elements
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
+            i++;
+            (arr[i], arr[j]) = (arr[j], arr[i]);
         }
     }
+    (arr[i + 1], arr[high]) = (arr[high], arr[i + 1]);
+    return i + 1;
 }</code>`;
     Prism.highlightAll();
 }
@@ -66,19 +75,21 @@ showCSharpButton.onclick = function() {
 const showJSButton = document.getElementById('showJS');
 showJSButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-javascript">function bubbleSort(arr) {
-    let n = arr.length;
-    for (let i = 0; i < n-1; i++) {
-        for (let j = 0; j < n-i-1; j++) {
-            if (arr[j] > arr[j+1]) {
-                // Swap neighboring elements
-                let temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
-            }
+        `<code class="language-javascript">function quickSort(arr) {
+    if (arr.length <= 1) {
+        return arr;
+    }
+    let pivot = arr[arr.length - 1];
+    let left = [];
+    let right = [];
+    for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] < pivot) {
+            left.push(arr[i]);
+        } else {
+            right.push(arr[i]);
         }
     }
-    return arr;
+    return [...quickSort(left), pivot, ...quickSort(right)];
 }</code>`;
     Prism.highlightAll();
 }
@@ -86,14 +97,15 @@ showJSButton.onclick = function() {
 const showPythonButton = document.getElementById('showPython');
 showPythonButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-python">def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n-1):
-        for j in range(n-i-1):
-            if arr[j] > arr[j+1]:
-                # Swap neighboring elements
-                arr[j], arr[j+1] = arr[j+1], arr[j]
-    return arr</code>`;
+        `<code class="language-python">def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    pivot = arr[len(arr) - 1]
+    left = [x for x in arr[:-1] if x < pivot]
+    right = [x for x in arr[:-1] if x >= pivot]
+
+    return quicksort(left) + [pivot] + quicksort(right)</code>`;
     Prism.highlightAll();
 }
 
@@ -108,13 +120,13 @@ function setup() {
 async function sort() {
     inProgress = true;
     stopRequested = false;
-    
+
     if (!isSorted){
         let arrayCopy = [...array];
-        bubbleSort(arrayCopy);
+        quickSort(arrayCopy);
         isSorted = true;
     }
-    
+
     while (currentStep >= -1 && currentStep < history.length - 1) {
         if (stopRequested) {
             inProgress = false;
@@ -128,23 +140,39 @@ async function sort() {
             await sleep(delayRange.value);
         }
     }
-    
+
     inProgress = false;
 }
 // Function to provide history of state change
-function bubbleSort(arr) {
-    let len = arr.length;
-    for (let i = 0; i < len - 1; i++) {
-        for (let j = 0; j < len - 1 - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-                // Swap the elements
-                let temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                history.push([j, j+1])
+function quickSort(arr) {
+    function partition(arr, low, high) {
+        let pivot = arr[high];
+        let i = low - 1;
+
+        for (let j = low; j < high; j++) {
+            if (arr[j] < pivot) {
+                i++;
+                [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+                if (i != j) history.push([i, j]);
             }
         }
+
+        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+        if (i + 1 != high) history.push([i + 1, high]);
+
+        return i + 1;
     }
+
+    function quickSortRecursive(arr, low, high) {
+        if (low < high) {
+            let pi = partition(arr, low, high);
+
+            quickSortRecursive(arr, low, pi - 1);
+            quickSortRecursive(arr, pi + 1, high);
+        }
+    }
+
+    quickSortRecursive(arr, 0, arr.length - 1);
 }
 // Make one step forward
 function stepForward() {
@@ -153,7 +181,7 @@ function stepForward() {
         let hs = history[currentStep];
         [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
         visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
-    } 
+    }
 }
 // Make one step back
 function stepBack() {

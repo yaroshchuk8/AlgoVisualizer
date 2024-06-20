@@ -1,0 +1,60 @@
+﻿@page
+
+@{
+    ViewData["Title"] = "Dijkstra's algorithm";
+}
+
+<div class="container d-flex flex-column align-items-start">
+    <div class="row pb-3" role="group">
+        <div class="btn-group col-auto">
+            <button id="start" class="btn btn-primary btn-lg mx-1">Start</button>
+            <button id="clear" class="btn btn-secondary btn-lg">Clear</button>
+        </div>
+        <div class="px-5 mx-3 col-auto">
+            <button id="theoryButton" class="btn btn-outline-dark btn-lg">Theory</button>
+        </div>
+    </div>  
+    <div class="row pt-3" role="group">
+        <div id="grid" class="grid col-auto"></div>
+        <div class="col-auto">
+            <div class="btn-group mb-2" role="group">
+                <button id="showCSharp" class="btn btn-info">C#</button>
+                <button id="showJS" class="btn btn-info mx-1">JS</button>
+                <button id="showPython" class="btn btn-info">Python</button>
+            </div>
+            <pre id="codeBox" class="line-numbers fixed-height"></pre>
+        </div>
+    </div>
+</div>
+
+<div id="theoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Dijkstra's algorithm</h2>
+        Dijkstra's algorithm is a way to find the shortest path from one node in a graph to another. It's named after Edsger Dijkstra, a famous Dutch computer scientist. Here's how it works:<br/>
+        1. Start at the beginning: You begin at the starting node and mark its distance as 0. Mark all other nodes' distances as infinity, meaning you haven't yet found a way to reach them.<br/>
+        2. Visit the nearest node: From the current node, move to the nearest neighboring node that hasn't been visited yet. Update its distance if a shorter path is found.<br/>
+        3. Repeat until done: Continue visiting the nearest node until you've processed all nodes or reached the destination node. Each time you move, you update the shortest known distances to each neighboring node.<br/>
+        4. Path reconstruction: Once you've reached the destination node, you can trace your path back to the starting node to find the shortest path.<br/>
+        In essence, Dijkstra's algorithm helps you find the shortest path in a graph where each edge has a non-negative weight. It's widely used in various applications, such as GPS navigation and network routing protocols.<br/>
+        <img src="~/images/pathfinding/dijkstra.jpg" alt="BFS Visualization" style="width:100%;height:auto;">
+    </div>
+</div>
+
+<script>
+document.getElementById('theoryButton').onclick = function() {
+    document.getElementById('theoryModal').style.display = "block";
+}
+
+document.querySelector('.modal .close').onclick = function() {
+    document.getElementById('theoryModal').style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('theoryModal')) {
+        document.getElementById('theoryModal').style.display = "none";
+    }
+}
+</script>
+
+<script src="~/js/pathfinding/dijkstra.js"></script>

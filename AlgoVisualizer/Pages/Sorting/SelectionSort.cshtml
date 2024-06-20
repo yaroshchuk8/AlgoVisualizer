@@ -1,0 +1,65 @@
+﻿@page
+
+@{
+    ViewData["Title"] = "Selection Sort";
+}
+
+<div class="container d-flex flex-column align-items-start">
+    <div class="row" role="group">
+        <div class="btn-group col-auto">
+            <button id="sort" class="btn btn-primary"><i class="bi bi-play-fill"></i></button>
+            <button id="stop" class="btn btn-secondary mx-1"><i class="bi bi-pause-fill"></i></button>
+            
+            <button id="back" class="btn btn-primary"><i class="bi bi-rewind"></i></button>
+            <button id="forward" class="btn btn-primary mx-1"><i class="bi bi-fast-forward"></i></button>
+            
+            <button id="shuffle" class="btn btn-success"><i class="bi bi-shuffle"></i></button>
+        </div>
+        <div class="px-1 col-auto">
+            <label for="delayRange">Delay (ms): <span id="delayValue">250</span></label>
+            <input type="range" class="form-range" id="delayRange" min="100" max="1000" step="50" value="250">
+        </div>
+        <div class="px-5 mx-3 col-auto">
+            <button id="theoryButton" class="btn btn-outline-dark btn-lg">Theory</button>
+        </div>
+    </div>
+    
+    <div class="row pt-3" role="group">
+        <canvas id="visualizationCanvas" width="521" height="520" class="col-auto"></canvas>
+        <div class="col-auto">
+            <div class="btn-group mb-2" role="group">
+                <button id="showCSharp" class="btn btn-info">C#</button>
+                <button id="showJS" class="btn btn-info mx-1">JS</button>
+                <button id="showPython" class="btn btn-info">Python</button>
+            </div>
+            <pre id="codeBox" class="line-numbers fixed-height"></pre>
+        </div>
+    </div>
+</div>
+
+<div id="theoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Selection Sort Algorithm</h2>
+        <p>Selection sort is a straightforward comparison-based sorting algorithm. It divides the input list into two parts: the sublist of items already sorted, which is built up from left to right at the front (left) of the list, and the sublist of items remaining to be sorted that occupy the rest of the list. The algorithm proceeds by repeatedly finding the minimum (or maximum, depending on the sorting order) element from the unsorted sublist and moving it to the end of the sorted sublist.</p>
+        <img src="~/images/sorting/selectionsort.png" alt="Insertion Sort Visualization" style="width:100%;height:auto;">
+    </div>
+</div>
+
+<script>
+document.getElementById('theoryButton').onclick = function() {
+    document.getElementById('theoryModal').style.display = "block";
+}
+
+document.querySelector('.modal .close').onclick = function() {
+    document.getElementById('theoryModal').style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('theoryModal')) {
+        document.getElementById('theoryModal').style.display = "none";
+    }
+}
+</script>
+
+<script type="module" src="~/js/sorting/SelectionSort.js"></script>

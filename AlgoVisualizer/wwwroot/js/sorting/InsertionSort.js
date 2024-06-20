@@ -42,22 +42,23 @@ const codeBox = document.getElementById('codeBox');
 
 const showCSharpButton = document.getElementById('showCSharp');
 showCSharpButton.onclick = function() {
-    codeBox.innerHTML = 
-    `<code class="language-csharp">public void BubbleSort(int[] arr)
+    codeBox.innerHTML =
+        `<code class="language-csharp">public void InsertionSort(int[] array)
 {
-    int n = arr.Length;
-    for (int i = 0; i < n - 1; i++)
+    int n = array.Length;
+    for (int i = 1; i < n; i++)
     {
-        for (int j = 0; j < n - i - 1; j++)
+        int key = array[i];
+        int j = i - 1;
+
+        // Move elements of array[0..i-1], that are greater than key,
+        // to one position ahead of their current position
+        while (j >= 0 && array[j] > key)
         {
-            if (arr[j] > arr[j + 1])
-            {
-                // Swap neighboring elements
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
+            array[j + 1] = array[j];
+            j = j - 1;
         }
+        array[j + 1] = key;
     }
 }</code>`;
     Prism.highlightAll();
@@ -66,19 +67,19 @@ showCSharpButton.onclick = function() {
 const showJSButton = document.getElementById('showJS');
 showJSButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-javascript">function bubbleSort(arr) {
-    let n = arr.length;
-    for (let i = 0; i < n-1; i++) {
-        for (let j = 0; j < n-i-1; j++) {
-            if (arr[j] > arr[j+1]) {
-                // Swap neighboring elements
-                let temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
-            }
+        `<code class="language-javascript">function insertionSort(arr) {
+    for (let i = 1; i < arr.length; i++) {
+        let key = arr[i];
+        let j = i - 1;
+
+        // Move elements of arr[0..i-1], that are greater than key,
+        // to one position ahead of their current position
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
         }
+        arr[j + 1] = key;
     }
-    return arr;
 }</code>`;
     Prism.highlightAll();
 }
@@ -86,13 +87,19 @@ showJSButton.onclick = function() {
 const showPythonButton = document.getElementById('showPython');
 showPythonButton.onclick = function() {
     codeBox.innerHTML =
-    `<code class="language-python">def bubble_sort(arr):
-    n = len(arr)
-    for i in range(n-1):
-        for j in range(n-i-1):
-            if arr[j] > arr[j+1]:
-                # Swap neighboring elements
-                arr[j], arr[j+1] = arr[j+1], arr[j]
+        `<code class="language-python">def insertion_sort(arr):
+    # Traverse through 1 to len(arr)
+    for i in range(1, len(arr)):
+        key = arr[i]
+        
+        # Move elements of arr[0..i-1], that are greater than key,
+        # to one position ahead of their current position
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+        
     return arr</code>`;
     Prism.highlightAll();
 }
@@ -108,13 +115,13 @@ function setup() {
 async function sort() {
     inProgress = true;
     stopRequested = false;
-    
+
     if (!isSorted){
         let arrayCopy = [...array];
-        bubbleSort(arrayCopy);
+        insertionSort(arrayCopy);
         isSorted = true;
     }
-    
+
     while (currentStep >= -1 && currentStep < history.length - 1) {
         if (stopRequested) {
             inProgress = false;
@@ -128,22 +135,21 @@ async function sort() {
             await sleep(delayRange.value);
         }
     }
-    
+
     inProgress = false;
 }
 // Function to provide history of state change
-function bubbleSort(arr) {
+function insertionSort(arr) {
     let len = arr.length;
-    for (let i = 0; i < len - 1; i++) {
-        for (let j = 0; j < len - 1 - i; j++) {
-            if (arr[j] > arr[j + 1]) {
-                // Swap the elements
-                let temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                history.push([j, j+1])
-            }
+    for (let i = 1; i < len; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            history.push([j, j + 1]);
+            j--;
         }
+        arr[j + 1] = key;
     }
 }
 // Make one step forward
@@ -153,7 +159,7 @@ function stepForward() {
         let hs = history[currentStep];
         [array[hs[0]], array[hs[1]]] = [array[hs[1]], array[hs[0]]];
         visualize(array, hs[0], hs[1]); // Pass the indices of swapped elements
-    } 
+    }
 }
 // Make one step back
 function stepBack() {
