@@ -1,0 +1,1 @@
+Dependencies: .NET 8
